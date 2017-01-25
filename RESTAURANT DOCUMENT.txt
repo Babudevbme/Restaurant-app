@@ -1,0 +1,106 @@
+restaurant app 
+ 
+Test #1:
+=========
+ order the food item
+Input:
+========
+CALL PR_ORDER_RECORD('T2','TEA,IDLY,POORI','1,2,3');
+ 
+Conditions:
+========
+1) Whether the given seat number is valid
+2) Wthether the given foot item is available and served in the session
+3) Whether the given food item is available in stock
+4) whether one orderid order only five items
+
+output 
+======
+ORDER IS TAKEN
+
+see table order_records ==>id | order_id |seatno |item |quantity |ststus | orderdate
+                            1 |  176     |t6     |idly |      6  |ordered|2017-01-23 09:33:00
+
+see table bill_details ==>id |orederid |item |price
+                           1 |176      |idly |30
+and total bill amount is displayed in result
+quantity is reduced at item_schedule table
+
+Test #2:
+=======
+Order cancel(single and multiple order)
+ 
+Input:
+======  	
+   CALL PR_CANCEL_ORDERS(176,'idly,dosa')
+
+orderid taken from order_record table
+ 
+Condition:
+1) Check whether the given order id and item exists
+2)Check whether the given order id status is 'ORDERED'
+3)Check whether the given order id STATUS IS 'BILL PAID'
+4)Check whether the given order id status is 'CANCELLED'
+Output:
+=======
+1)ORDER IS CANCELLED (or) 
+2)BILL PAID ORDER CANNOT BE CANCEL (OR)
+3)YOUR ORDER ALREADY CANCELLED
+cancelled item deleted from bill_detail table and total bill amount is show in result,
+order_records table status is updated to'CANCELLED'
+
+ Test #3:
+========
+BILL PAY(single and multiple order)
+ 
+Input:
+======  	
+   CALL  PR_BILL_PAY(176,'coffee')
+
+
+orderid taken from order_record table
+ 
+Condition:
+1) Check whether the given order id and item exists
+2)Check whether the given order id status is 'ORDERED'
+3)Check whether the given order id STATUS IS 'BILL PAID'
+4)Check whether the given order id status is 'CANCELLED'
+Output:
+=======
+1) YOUR bill IS PAID or 
+2)YOUR BILL ALREADY PAID OR
+3)YOUR ORDER CANCELLED SO NO NEED TO PAY
+ =>paid orders are deleted from bill_details
+ =>order_records table status is updated to'BILL PAID'
+
+Test #4
+=======
+Add extra_items to order id
+
+condition
+check whether the given order_id reached maximum items to be served.
+
+input:
+=====
+CALL PR_ADD_ITEMS(142,'COFFEE,VADA','3,2')
+
+output:
+=======
+order is taken
+order_records and bill_details tables are updated
+
+DESCRIPTION
+-----------
+  By using  PR_ORDER_RECORD procedure we order maximum five items for single order_id;
+ *the order_id is genereded randomly
+ *if any order is placed in one seat number that seat status updated to 'not availble' in seed_seats.
+ *when the order_id (for particular seatno) status is updated to "BILL PAID"or"CANCELLED" by using  PR_cancel_orders (or)
+PR_bill pay procedure,that time seat status updated to"AVAILABLE".
+ * An order_id can order maximum 5 items =>if he order only 3 item then he have chance to order remaining 2 items by using 
+PR_ADD_ITEMS procedure.
+ *here we can cancel particular item or whole order by using PR_CANCEL_ORDERS procedure
+ * here bill pay system used for make seat available.
+ * the item stock is updated automaticaly with the help of event EV_UPDATE_SCHEDULE
+
+
+
